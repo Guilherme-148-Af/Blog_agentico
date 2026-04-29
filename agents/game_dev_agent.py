@@ -11,7 +11,7 @@ class GameDevNewsAgent(BaseNewsAgent):
             "Desenvolvimento de Novos Jogos"
         )
 
-        self.hub_url = "http://192.168.51.42:8080/publish"
+        self.hub_url = "https://news2pi.onrender.com/publish"
         self.token = "epf2026_secret"
 
     async def collect_data(self):
@@ -49,12 +49,17 @@ class GameDevNewsAgent(BaseNewsAgent):
         data = await self.collect_data()
         processed = await self.process_with_ai(data)
 
+        headers = {
+            "Content-Type": "application/json",
+            "x-token": self.token
+        }
+
         try:
-            async with httpx.AsyncClient(timeout=15.0) as client:
+            async with httpx.AsyncClient(timeout=20.0) as client:
                 response = await client.post(
                     self.hub_url,
                     json=processed,
-                    headers={"x-token": self.token}
+                    headers=headers
                 )
 
             print("RESULTADO FINAL:")
